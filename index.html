@@ -3,182 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LUCKLINE PRO - Color Prediction</title>
+    <title>LUCKLINE PRO - Real Time</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a1a; color: white; margin: 0; padding: 0; }
-        .top-nav { background: #009688; padding: 15px; text-align: center; font-size: 20px; font-weight: bold; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-        .wallet-section { background: linear-gradient(135deg, #333, #222); margin: 15px; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 1px solid #444; }
-        .balance-label { font-size: 14px; color: #bbb; }
-        .balance-amount { font-size: 28px; font-weight: bold; color: #4caf50; margin: 5px 0; }
-        .action-btns { display: flex; gap: 10px; margin-top: 15px; }
-        .btn { flex: 1; padding: 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .recharge-btn { background: #009688; color: white; }
-        .withdraw-btn { background: #f1f1f1; color: #333; }
-
-        /* Timer & Period Section */
-        .game-header { display: flex; justify-content: space-between; padding: 15px; background: #252525; margin: 15px; border-radius: 10px; align-items: center; }
-        .period-info b { color: #009688; display: block; font-size: 18px; }
-        .timer-info b { font-size: 24px; color: #ffeb3b; }
-
-        /* Prediction Buttons */
-        .prediction-box { margin: 15px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-        .color-btn { padding: 15px; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; font-size: 16px; }
-        .bg-green { background: #2ecc71; }
-        .bg-violet { background: #9b59b6 }
-        .bg-red { background: #e74c3c; }
-
-        /* History Table */
-        .history-section { margin: 15px; background: #252525; border-radius: 10px; overflow: hidden; }
-        .history-title { padding: 15px; background: #333; font-weight: bold; border-bottom: 1px solid #444; }
-        table { width: 100%; border-collapse: collapse; text-align: center; }
-        th, td { padding: 12px; border-bottom: 1px solid #333; font-size: 14px; }
-        .dot { height: 12px; width: 12px; border-radius: 50%; display: inline-block; }
-
-        /* Modal */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); }
-        .modal-content { background: #2c2c2c; margin: 30% auto; padding: 25px; border-radius: 15px; width: 85%; text-align: center; border: 1px solid #009688; }
-        input[type="number"] { width: 80%; padding: 10px; margin: 15px 0; border-radius: 5px; border: 1px solid #444; background: #1a1a1a; color: white; }
+        body { font-family: sans-serif; background: #121212; color: white; margin: 0; text-align: center; }
+        .top-nav { background: #009688; padding: 15px; font-size: 20px; font-weight: bold; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .wallet { background: #1e1e1e; margin: 15px; padding: 20px; border-radius: 12px; border: 1px solid #333; text-align: left; }
+        .balance { font-size: 30px; color: #4caf50; font-weight: bold; margin: 10px 0; }
+        .game-card { background: #252525; margin: 15px; padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .timer-box b { font-size: 24px; color: #ffeb3b; display: block; }
+        .period-box b { font-size: 18px; color: #009688; display: block; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 15px; }
+        .color-btn { padding: 15px; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; }
+        .green { background: #2ecc71; } .violet { background: #9b59b6; } .red { background: #e74c3c; }
+        .history { margin: 15px; background: #252525; border-radius: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 10px; border-bottom: 1px solid #333; font-size: 13px; }
+        .circle { height: 10px; width: 10px; border-radius: 50%; display: inline-block; }
     </style>
 </head>
 <body>
 
-<div class="top-nav">LUCKLINE WIN GO</div>
+<div class="top-nav">LUCKLINE PRO</div>
 
-<div class="wallet-section">
-    <div class="balance-label">Available Balance</div>
-    <div class="balance-amount">₹ <span id="balance">1000.00</span></div>
-    <div class="action-btns">
-        <button class="btn recharge-btn" onclick="openRecharge()">Recharge</button>
-        <button class="btn withdraw-btn">Withdraw</button>
-    </div>
+<div class="wallet">
+    <div style="color:#aaa; font-size:14px;">बैलेंस (Available Balance)</div>
+    <div class="balance">₹ <span id="balanceDisplay">0.00</span></div>
+    <button onclick="recharge()" style="background:#009688; border:none; color:white; padding:10px 20px; border-radius:5px; font-weight:bold;">रिचार्ज</button>
 </div>
 
-<div class="game-header">
-    <div class="period-info">
-        <span>Period Number</span>
-        <b id="period-id">20240326001</b>
-    </div>
-    <div class="timer-info">
-        <span>Count Down</span>
-        <b id="timer">00:60</b>
-    </div>
+<div class="game-card">
+    <div class="period-box">पीरिअड नंबर<b id="periodDisplay">---</b></div>
+    <div class="timer-box">समय (Seconds)<b id="timerDisplay">00:00</b></div>
 </div>
 
-<div class="prediction-box">
-    <button class="color-btn bg-green" onclick="openBet('GREEN')">Join Green</button>
-    <button class="color-btn bg-violet" onclick="openBet('VIOLET')">Join Violet</button>
-    <button class="color-btn bg-red" onclick="openBet('RED')">Join Red</button>
+<div class="btn-grid">
+    <button class="color-btn green" onclick="bet('GREEN')">Green</button>
+    <button class="color-btn violet" onclick="bet('VIOLET')">Violet</button>
+    <button class="color-btn red" onclick="bet('RED')">Red</button>
 </div>
 
-<div class="history-section">
-    <div class="history-title">Game History (Parity)</div>
+<div class="history">
+    <div style="padding:10px; background:#333; border-radius:10px 10px 0 0;">गेम हिस्ट्री</div>
     <table>
-        <thead>
-            <tr>
-                <th>Period</th>
-                <th>Number</th>
-                <th>Result</th>
-            </tr>
-        </thead>
-        <tbody id="history-body">
-            </tbody>
+        <thead><tr><th>पीरिअड</th><th>नंबर</th><th>रंग</th></tr></thead>
+        <tbody id="historyTable"></tbody>
     </table>
 </div>
 
-<div id="betModal" class="modal">
-    <div class="modal-content">
-        <h3 id="betTitle">Join Green</h3>
-        <p style="color: #bbb;">Contract Money</p>
-        <input type="number" id="betAmount" value="10" min="10">
-        <div style="font-size: 12px; color: #ff9800; margin-bottom: 10px;">Note: 2% service fee will be deducted</div>
-        <button class="btn recharge-btn" onclick="confirmBet()">Confirm</button>
-        <button class="btn withdraw-btn" onclick="closeBet()">Cancel</button>
-    </div>
-</div>
-
 <script>
-    let balance = 1000.00;
-    let currentBet = null;
-    let timeLeft = 60;
-    let currentPeriod = 20240326001;
+    // 1. बैलेंस मैनेजमेंट (localStorage)
+    let myBalance = parseFloat(localStorage.getItem('luckline_bal')) || 0;
+    
+    function updateBalance(amt) {
+        myBalance += amt;
+        localStorage.setItem('luckline_bal', myBalance);
+        document.getElementById('balanceDisplay').innerText = myBalance.toFixed(2);
+    }
 
-    // Timer Logic
-    setInterval(() => {
-        timeLeft--;
-        if (timeLeft <= 0) {
-            processResult();
-            timeLeft = 60;
-            currentPeriod++;
-            document.getElementById('period-id').innerText = currentPeriod;
-        }
-        let sec = timeLeft < 10 ? "0" + timeLeft : timeLeft;
-        document.getElementById('timer').innerText = "00:" + sec;
+    function recharge() {
+        let amt = prompt("कितना रिचार्ज करना है?");
+        if(amt) updateBalance(parseFloat(amt));
+    }
+
+    // 2. रियल टाइमर और पीरियड नंबर (Real Clock Based)
+    function startClock() {
+        setInterval(() => {
+            let now = new Date();
+            let seconds = now.getSeconds();
+            let remaining = 60 - seconds;
+            
+            // पीरियड नंबर: साल+महीना+तारीख+कुल मिनट
+            let period = now.getFullYear().toString() + (now.getMonth()+1).toString().padStart(2,'0') + now.getDate().toString().padStart(2,'0') + (now.getHours()*60 + now.getMinutes()).toString().padStart(3,'0');
+            
+            document.getElementById('periodDisplay').innerText = period;
+            document.getElementById('timerDisplay').innerText = "00:" + (remaining < 10 ? "0"+remaining : remaining);
+
+            // जब टाइमर 0 हो (नया मिनट शुरू हो)
+            if (remaining === 60) {
+                generateResult(period);
+            }
+            
+            // आखिरी 5 सेकंड में बेटिंग बंद
+            let btns = document.querySelectorAll('.color-btn');
+            if(remaining <= 5) {
+                btns.forEach(b => b.disabled = true);
+                btns.forEach(b => b.style.opacity = "0.4");
+            } else {
+                btns.forEach(b => b.disabled = false);
+                btns.forEach(b => b.style.opacity = "1");
+            }
+        }, 1000);
+    }
+
+    // 3. गेम रिजल्ट (Demo Random Logic)
+    function generateResult(period) {
+        let num = Math.floor(Math.random() * 10);
+        let color = (num % 2 === 0) ? 'RED' : 'GREEN';
+        if (num === 0 || num === 5) color = 'VIOLET';
         
-        // Lock betting in last 5 seconds
-        if(timeLeft <= 5) {
-            document.querySelectorAll('.color-btn').forEach(b => b.disabled = true);
-            document.querySelectorAll('.color-btn').forEach(b => b.style.opacity = "0.5");
-        } else {
-            document.querySelectorAll('.color-btn').forEach(b => b.disabled = false);
-            document.querySelectorAll('.color-btn').forEach(b => b.style.opacity = "1");
-        }
-    }, 1000);
-
-    function openBet(color) {
-        currentBet = color;
-        document.getElementById('betTitle').innerText = "Join " + color;
-        document.getElementById('betModal').style.display = "block";
-    }
-
-    function closeBet() {
-        document.getElementById('betModal').style.display = "none";
-    }
-
-    function confirmBet() {
-        let amt = parseInt(document.getElementById('betAmount').value);
-        if (amt > balance) { alert("Insufficient Balance!"); return; }
-        if (amt < 10) { alert("Minimum bet is ₹10"); return; }
-        
-        balance -= amt;
-        updateUI();
-        closeBet();
-        alert("Bet Placed: " + currentBet + " for ₹" + amt);
-    }
-
-    function processResult() {
-        const colors = ['RED', 'GREEN', 'VIOLET'];
-        const winColor = colors[Math.floor(Math.random() * colors.length)];
-        const winNum = Math.floor(Math.random() * 10);
-        
-        // If user won (Demo Logic)
-        // In real app, win/loss will check against 'currentBet'
-
-        addHistory(currentPeriod, winNum, winColor);
-    }
-
-    function addHistory(period, num, color) {
-        let colorClass = color === 'RED' ? 'bg-red' : (color === 'GREEN' ? 'bg-green' : 'bg-violet');
-        let row = `<tr>
-            <td>${period}</td>
-            <td>${num}</td>
-            <td><span class="dot ${colorClass}"></span></td>
-        </tr>`;
-        let table = document.getElementById('history-body');
+        let row = `<tr><td>${period}</td><td>${num}</td><td><span class="circle ${color.toLowerCase()}"></span> ${color}</td></tr>`;
+        let table = document.getElementById('historyTable');
         table.innerHTML = row + table.innerHTML;
     }
 
-    function updateUI() {
-        document.getElementById('balance').innerText = balance.toFixed(2);
+    function bet(color) {
+        let amt = prompt("कितने पैसे लगाने हैं?", "10");
+        if(!amt || amt > myBalance) {
+            alert("बैलेंस कम है या गलत अमाउंट है!");
+            return;
+        }
+        updateBalance(-parseFloat(amt));
+        alert(color + " पर ₹" + amt + " लग गए! अगले मिनट रिजल्ट देखें।");
     }
 
-    function openRecharge() {
-        let rAmt = prompt("Enter Recharge Amount:");
-        if(rAmt) {
-            balance += parseInt(rAmt);
-            updateUI();
-        }
-    }
+    // Initialize
+    updateBalance(0);
+    startClock();
 </script>
 
 </body>
-</html>
+    </html>
+    
