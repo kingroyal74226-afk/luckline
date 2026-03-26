@@ -1,1 +1,73 @@
+<!DOCTYPE html>  <html lang="hi">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>LUCKLINE GAME</title>  
+    <style>  
+        body { font-family: sans-serif; background: #121212; color: white; margin: 0; padding: 0; text-align: center; }  
+        .header { background: #ffcc00; color: black; padding: 15px; font-weight: bold; font-size: 22px; position: sticky; top: 0; }  
+        .wallet-card { background: linear-gradient(45deg, #1e1e1e, #333); margin: 15px; padding: 20px; border-radius: 15px; border-left: 5px solid #ffcc00; text-align: left; }  
+        .balance-amt { font-size: 30px; color: #4caf50; margin: 10px 0; }  
+        .btn-group { display: flex; justify-content: space-around; margin-top: 10px; }  
+        .btn { padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; width: 45%; }  
+        .dep-btn { background: #ffcc00; color: black; }  
+        .wd-btn { background: #fff; color: black; }  
+        .game-zone { padding: 20px; background: #1a1a1a; margin: 15px; border-radius: 15px; }  
+        .color-box { width: 100%; height: 100px; background: #333; border-radius: 10px; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; }  
+        .bet-btns { display: flex; gap: 10px; }  
+        .bet-btn { flex: 1; padding: 15px; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; }  
+        .red { background: #e74c3c; }  
+        .green { background: #2ecc71; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); }
+        .modal-content { background: #222; margin: 20% auto; padding: 25px; border-radius: 20px; width: 80%; border: 1px solid #ffcc00; }
+        .upi-id { background: #333; padding: 10px; border-radius: 8px; color: #ffcc00; font-weight: bold; margin: 15px 0; border: 1px dashed #ffcc00; }
+    </style>  
+</head>  
+<body>  
+<div class="header">LUCKLINE GAME</div>  
+<div class="wallet-card">  
+    <div>कुल बैलेंस</div>  
+    <div class="balance-amt">₹ <span id="balance">0.00</span></div>  
+    <div class="btn-group">  
+        <button class="btn dep-btn" onclick="openPayment()">रिचार्ज</button>  
+        <button class="btn wd-btn" onclick="alert('निकासी के लिए ₹500 चाहिए')">निकासी</button>  
+    </div>  
+</div>  
+<div class="game-zone">  
+    <h3>अगला रंग पहचानें</h3>  
+    <div id="result-box" class="color-box">?</div>  
+    <div class="bet-btns">  
+        <button class="bet-btn red" onclick="placeBet('RED')">RED</button>  
+        <button class="bet-btn green" onclick="placeBet('GREEN')">GREEN</button>  
+    </div>  
+</div>  
+<div id="paymentModal" class="modal">
+    <div class="modal-content">
+        <h2 style="color: #ffcc00;">पैसे जमा करें</h2>
+        <div class="upi-id">royalpathan@ptaxis</div>
+        <button class="btn dep-btn" style="width: 100%;" onclick="window.location.href='upi://pay?pa=royalpathan@ptaxis&pn=LUCKLINE&cu=INR'">Pay via UPI App</button>
+        <button class="btn wd-btn" style="width: 100%; margin-top: 10px;" onclick="addDemoMoney()">Add Demo Money</button>
+        <p style="cursor:pointer; color:red; margin-top:10px;" onclick="closePayment()">बंद करें</p>
+    </div>
+</div>
+<script>  
+    let balance = 0;  
+    function openPayment() { document.getElementById('paymentModal').style.display = "block"; }
+    function closePayment() { document.getElementById('paymentModal').style.display = "none"; }
+    function addDemoMoney() { let amt = prompt("Amount?"); if(amt) { balance += parseInt(amt); document.getElementById('balance').innerText = balance.toFixed(2); closePayment(); } }
+    function placeBet(choice) {  
+        if(balance < 10) { alert("बैलेंस कम है!"); return; }  
+        balance -= 10; document.getElementById('balance').innerText = balance.toFixed(2);  
+        let winner = ['RED', 'GREEN'][Math.floor(Math.random() * 2)];  
+        document.getElementById('result-box').innerText = "Wait...";  
+        setTimeout(() => {  
+            document.getElementById('result-box').innerText = winner;  
+            document.getElementById('result-box').style.background = (winner === 'RED') ? '#e74c3c' : '#2ecc71';  
+            if(choice === winner) { balance += 20; alert("जीते!"); } else { alert("हारे!"); }  
+            document.getElementById('balance').innerText = balance.toFixed(2);  
+        }, 2000);  
+    }  
+</script>
+</body>  
+                                                                    </html>
 
