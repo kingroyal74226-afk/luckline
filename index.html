@@ -3,145 +3,141 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Color Prediction - Win Big!</title>
+  <title>Jalwa Game - Color Prediction</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
   <style>
-    .color-box {
-      transition: all 0.4s ease;
-    }
-    .result {
-      animation: pop 0.6s ease;
-    }
-    @keyframes pop {
-      0% { transform: scale(0.5); }
-      100% { transform: scale(1); }
-    }
+    body { font-family: system-ui, sans-serif; }
+    .game-btn { transition: all 0.3s; }
+    .game-btn:hover { transform: scale(1.05); }
+    .result-circle { width: 40px; height: 40px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
   </style>
 </head>
-<body class="bg-gradient-to-br from-purple-900 to-black text-white min-h-screen flex items-center justify-center">
-  <div class="max-w-md w-full bg-zinc-900 rounded-3xl shadow-2xl p-6">
-    <h1 class="text-4xl font-bold text-center mb-2">🎨 Color Prediction</h1>
-    <p class="text-center text-emerald-400 text-sm mb-6">Predict & Win Real Time</p>
+<body class="bg-zinc-950 text-white min-h-screen pb-20">
 
-    <!-- Balance -->
-    <div class="bg-zinc-800 rounded-2xl p-4 flex justify-between items-center mb-6">
-      <div>
-        <p class="text-xs text-zinc-400">Your Balance</p>
-        <p id="balance" class="text-3xl font-bold text-emerald-400">₹ 5000</p>
+  <!-- Header -->
+  <header class="bg-zinc-900 sticky top-0 z-50 border-b border-zinc-800">
+    <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 bg-gradient-to-br from-red-500 via-green-500 to-violet-500 rounded-full flex items-center justify-center text-xs font-bold">J</div>
+        <h1 class="text-2xl font-bold tracking-tight">JALWA</h1>
       </div>
-      <button onclick="addMoney()" class="bg-emerald-500 hover:bg-emerald-600 px-6 py-2 rounded-xl font-medium">
-        + Add Money
-      </button>
+      <div class="flex items-center gap-4">
+        <div onclick="showWalletModal()" class="bg-zinc-800 px-4 py-1 rounded-full flex items-center gap-2 cursor-pointer">
+          <span class="text-yellow-400">₹</span>
+          <span id="balance" class="font-semibold">5000.00</span>
+        </div>
+        <div class="w-8 h-8 bg-zinc-700 rounded-full flex items-center justify-center cursor-pointer">👤</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-2xl mx-auto px-4 pt-6">
+
+    <!-- Welcome / Bonus -->
+    <div class="bg-gradient-to-r from-violet-600 to-fuchsia-600 p-4 rounded-2xl mb-6 text-center">
+      <p class="text-sm">Welcome Bonus Available!</p>
+      <p class="text-2xl font-bold">₹500 Claim Now</p>
     </div>
 
-    <!-- Bet Amount -->
+    <!-- Game Area -->
+    <div class="bg-zinc-900 rounded-3xl p-6 mb-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold">Color Prediction</h2>
+        <div id="timer" class="bg-red-600 text-white px-6 py-2 rounded-full font-mono text-2xl font-bold">30</div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-4 mb-8">
+        <button onclick="placeBet('Red')" class="game-btn bg-red-600 hover:bg-red-700 h-24 rounded-2xl text-2xl font-bold flex flex-col items-center justify-center">🔴<br>RED<br><span class="text-sm mt-1">2x</span></button>
+        <button onclick="placeBet('Green')" class="game-btn bg-green-600 hover:bg-green-700 h-24 rounded-2xl text-2xl font-bold flex flex-col items-center justify-center">🟢<br>GREEN<br><span class="text-sm mt-1">2x</span></button>
+        <button onclick="placeBet('Violet')" class="game-btn bg-violet-600 hover:bg-violet-700 h-24 rounded-2xl text-2xl font-bold flex flex-col items-center justify-center">🟣<br>VIOLET<br><span class="text-sm mt-1">4.5x</span></button>
+      </div>
+
+      <div class="bg-zinc-800 rounded-2xl p-4">
+        <p class="text-sm text-zinc-400 mb-2">Bet Amount</p>
+        <div class="flex gap-2">
+          <button onclick="setBet(10)" class="flex-1 bg-zinc-700 py-3 rounded-xl">₹10</button>
+          <button onclick="setBet(50)" class="flex-1 bg-zinc-700 py-3 rounded-xl">₹50</button>
+          <button onclick="setBet(100)" class="flex-1 bg-zinc-700 py-3 rounded-xl">₹100</button>
+          <button onclick="setBet(500)" class="flex-1 bg-zinc-700 py-3 rounded-xl">₹500</button>
+        </div>
+        <input id="customBet" type="number" placeholder="Custom Amount" class="w-full mt-3 bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-center">
+      </div>
+    </div>
+
+    <!-- Previous Results -->
     <div class="mb-6">
-      <label class="block text-sm text-zinc-400 mb-2">Bet Amount (₹)</label>
-      <input id="bet" type="number" value="100" 
-             class="w-full bg-zinc-800 text-3xl font-bold text-center py-4 rounded-2xl focus:outline-none">
+      <h3 class="text-lg font-semibold mb-3 flex items-center gap-2">
+        <span>Previous Results</span>
+        <span class="text-xs bg-zinc-800 px-2 py-1 rounded">Live</span>
+      </h3>
+      <div id="history" class="flex gap-3 overflow-x-auto pb-3"></div>
     </div>
 
-    <!-- Color Options -->
-    <div class="grid grid-cols-3 gap-4 mb-8">
-      <button onclick="selectColor('red')" 
-              class="color-box bg-red-500 hover:bg-red-600 h-28 rounded-3xl text-2xl font-bold shadow-lg">🔴 RED</button>
-      <button onclick="selectColor('green')" 
-              class="color-box bg-emerald-500 hover:bg-emerald-600 h-28 rounded-3xl text-2xl font-bold shadow-lg">🟢 GREEN</button>
-      <button onclick="selectColor('violet')" 
-              class="color-box bg-violet-500 hover:bg-violet-600 h-28 rounded-3xl text-2xl font-bold shadow-lg">🟣 VIOLET</button>
-    </div>
-
-    <!-- Selected Color -->
-    <div id="selected" class="text-center text-xl font-medium mb-4 h-8"></div>
-
-    <!-- Play Button -->
-    <button onclick="playGame()" 
-            id="playBtn"
-            class="w-full bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 py-6 text-2xl font-bold rounded-3xl transition-all">
-      PLAY NOW
-    </button>
-
-    <!-- Result Area -->
-    <div id="resultArea" class="hidden mt-6 text-center">
-      <p class="text-sm text-zinc-400 mb-2">Result in <span id="countdown" class="text-4xl font-bold text-white">10</span>s</p>
-      <div id="result" class="result text-6xl font-black py-6 rounded-3xl"></div>
-      <p id="winMsg" class="text-2xl font-bold mt-4"></p>
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-2 gap-4">
+      <button onclick="showDepositModal()" class="bg-emerald-600 hover:bg-emerald-700 py-6 rounded-3xl font-bold text-xl">DEPOSIT</button>
+      <button onclick="showWithdrawModal()" class="bg-amber-600 hover:bg-amber-700 py-6 rounded-3xl font-bold text-xl">WITHDRAW</button>
     </div>
   </div>
 
-  <script>
-    let balance = 5000;
-    let selectedColor = null;
-    let betAmount = 100;
+  <!-- Bottom Navigation -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-zinc-900 border-t border-zinc-800">
+    <div class="max-w-2xl mx-auto grid grid-cols-4 text-center py-2">
+      <a href="#" class="flex flex-col items-center text-emerald-400">
+        <span class="text-2xl">🏠</span>
+        <span class="text-xs mt-1">Home</span>
+      </a>
+      <a href="#" class="flex flex-col items-center">
+        <span class="text-2xl">🎮</span>
+        <span class="text-xs mt-1">Games</span>
+      </a>
+      <a href="#" onclick="showWalletModal()" class="flex flex-col items-center">
+        <span class="text-2xl">💰</span>
+        <span class="text-xs mt-1">Wallet</span>
+      </a>
+      <a href="#" class="flex flex-col items-center">
+        <span class="text-2xl">👤</span>
+        <span class="text-xs mt-1">Me</span>
+      </a>
+    </div>
+  </nav>
 
-    function selectColor(color) {
-      selectedColor = color;
-      document.getElementById('selected').innerHTML = 
-        `Selected: <span class="text-3xl">${color === 'red' ? '🔴 RED' : color === 'green' ? '🟢 GREEN' : '🟣 VIOLET'}</span>`;
-    }
+  <!-- Deposit Modal -->
+  <div id="depositModal" class="hidden fixed inset-0 bg-black/80 flex items-end md:items-center justify-center z-50">
+    <div class="bg-zinc-900 w-full max-w-md rounded-t-3xl md:rounded-3xl p-6">
+      <h2 class="text-2xl font-bold mb-6">Deposit Money</h2>
+      <input id="depositAmount" type="number" placeholder="Enter Amount" class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-4 text-lg mb-4">
+      <p class="text-sm text-zinc-400 mb-4">UPI / Bank Transfer (Instant)</p>
+      <button onclick="makeDeposit()" class="w-full bg-emerald-600 py-5 rounded-2xl font-bold text-xl">Pay Now</button>
+      <button onclick="hideModals()" class="w-full mt-3 py-4 text-zinc-400">Cancel</button>
+    </div>
+  </div>
 
-    function playGame() {
-      betAmount = parseInt(document.getElementById('bet').value) || 100;
-      if (!selectedColor) {
-        alert("Please select a color first! 🔥");
-        return;
-      }
-      if (betAmount > balance) {
-        alert("Balance kam hai bhai!");
-        return;
-      }
+  <!-- Withdraw Modal -->
+  <div id="withdrawModal" class="hidden fixed inset-0 bg-black/80 flex items-end md:items-center justify-center z-50">
+    <div class="bg-zinc-900 w-full max-w-md rounded-t-3xl md:rounded-3xl p-6">
+      <h2 class="text-2xl font-bold mb-6">Withdraw Money</h2>
+      <input id="withdrawAmount" type="number" placeholder="Enter Amount" class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-4 text-lg mb-4">
+      <input id="upiId" type="text" placeholder="Your UPI ID (e.g. name@upi)" class="w-full bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-4 text-lg mb-6">
+      <button onclick="makeWithdraw()" class="w-full bg-amber-600 py-5 rounded-2xl font-bold text-xl">Request Withdraw</button>
+      <button onclick="hideModals()" class="w-full mt-3 py-4 text-zinc-400">Cancel</button>
+    </div>
+  </div>
 
-      document.getElementById('playBtn').disabled = true;
-      document.getElementById('resultArea').classList.remove('hidden');
-      let time = 10;
-      const countdownEl = document.getElementById('countdown');
+  <!-- Wallet Modal -->
+  <div id="walletModal" class="hidden fixed inset-0 bg-black/80 flex items-end md:items-center justify-center z-50">
+    <div class="bg-zinc-900 w-full max-w-md rounded-t-3xl md:rounded-3xl p-6">
+      <h2 class="text-2xl font-bold mb-2">Your Wallet</h2>
+      <p id="modalBalance" class="text-4xl font-bold text-yellow-400 mb-8">₹5000.00</p>
+      <div class="space-y-4">
+        <button onclick="showDepositModal();hideModals()" class="w-full bg-emerald-600 py-5 rounded-2xl font-bold">Deposit</button>
+        <button onclick="showWithdrawModal();hideModals()" class="w-full bg-amber-600 py-5 rounded-2xl font-bold">Withdraw</button>
+      </div>
+      <button onclick="hideModals()" class="w-full mt-6 py-4 text-zinc-400">Close</button>
+    </div>
+  </div>
 
-      const timer = setInterval(() => {
-        time--;
-        countdownEl.textContent = time;
-        if (time <= 0) {
-          clearInterval(timer);
-          showResult();
-        }
-      }, 1000);
-    }
-
-    function showResult() {
-      const colors = ['red', 'green', 'violet'];
-      const randomColor = colors[Math.floor(Math.random() * colors.length)];
-      
-      const resultEl = document.getElementById('result');
-      resultEl.innerHTML = randomColor === 'red' ? '🔴 RED' : 
-                          randomColor === 'green' ? '🟢 GREEN' : '🟣 VIOLET';
-      resultEl.style.backgroundColor = randomColor === 'red' ? '#ef4444' : 
-                                     randomColor === 'green' ? '#10b981' : '#8b5cf6';
-
-      if (randomColor === selectedColor) {
-        balance += betAmount * 2; // 2x payout
-        document.getElementById('winMsg').innerHTML = `🎉 WIN +₹${betAmount*2}`;
-        document.getElementById('winMsg').className = "text-2xl font-bold mt-4 text-emerald-400";
-      } else {
-        balance -= betAmount;
-        document.getElementById('winMsg').innerHTML = `😢 LOSS -₹${betAmount}`;
-        document.getElementById('winMsg').className = "text-2xl font-bold mt-4 text-red-400";
-      }
-
-      document.getElementById('balance').textContent = `₹ ${balance}`;
-      
-      // Reset for next round
-      setTimeout(() => {
-        document.getElementById('playBtn').disabled = false;
-        selectedColor = null;
-        document.getElementById('selected').innerHTML = '';
-        document.getElementById('resultArea').classList.add('hidden');
-      }, 3000);
-    }
-
-    function addMoney() {
-      balance += 1000;
-      document.getElementById('balance').textContent = `₹ ${balance}`;
-      alert("₹1000 added (Demo mode)");
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
-</html>
+  </html>
