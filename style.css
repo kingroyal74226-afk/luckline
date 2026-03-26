@@ -1,13 +1,8 @@
-body { background-color: #121212; color: white; font-family: sans-serif; margin: 0; padding: 0; }
-.top-bar { background: #1f1f1f; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #333; }
-.recharge-btn { background: #ffcc00; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; }
-.game-container { text-align: center; padding: 20px; background: #1e1e1e; margin: 10px; border-radius: 15px; }
-#countdown { font-size: 3rem; color: #ff4747; margin: 10px 0; }
-.button-row { display: flex; justify-content: space-around; margin-top: 20px; }
-button { cursor: pointer; border: none; border-radius: 5px; color: white; font-weight: bold; transition: 0.2s; }
-.g-btn { background: #28a745; padding: 15px 20px; width: 30%; }
-.r-btn { background: #dc3545; padding: 15px 20px; width: 30%; }
-.v-btn { background: #6f42c1; padding: 15px 20px; width: 30%; }
-.button-row button:active { transform: scale(0.9); }
-.history-grid { display: flex; gap: 10px; flex-wrap: wrap; padding: 10px; }
-.dot { width: 25px; height: 25px; border-radius: 50%; display: inline-block; text-align: center; line-height: 25px; font-size: 12px; }
+/* Custom styles */
+body {
+  background: linear-gradient(to bottom, #18181b, #09090b);
+}
+
+.result-circle.red { background-color: #ef4444; }
+.result-circle.green { background-color: #22c55e; }
+.result-circle.violet { background-color: #8b5cf6; }
