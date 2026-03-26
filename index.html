@@ -3,124 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LUCKLINE PRO - Real Time</title>
-    <style>
-        body { font-family: sans-serif; background: #121212; color: white; margin: 0; text-align: center; }
-        .top-nav { background: #009688; padding: 15px; font-size: 20px; font-weight: bold; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-        .wallet { background: #1e1e1e; margin: 15px; padding: 20px; border-radius: 12px; border: 1px solid #333; text-align: left; }
-        .balance { font-size: 30px; color: #4caf50; font-weight: bold; margin: 10px 0; }
-        .game-card { background: #252525; margin: 15px; padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .timer-box b { font-size: 24px; color: #ffeb3b; display: block; }
-        .period-box b { font-size: 18px; color: #009688; display: block; }
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 15px; }
-        .color-btn { padding: 15px; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; }
-        .green { background: #2ecc71; } .violet { background: #9b59b6; } .red { background: #e74c3c; }
-        .history { margin: 15px; background: #252525; border-radius: 10px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 10px; border-bottom: 1px solid #333; font-size: 13px; }
-        .circle { height: 10px; width: 10px; border-radius: 50%; display: inline-block; }
-    </style>
+    <title>Jalwa Game | Home</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="top-bar">
+        <span>Balance: ₹<span id="balance">100.00</span></span>
+        <button onclick="location.href='signup.html'" class="recharge-btn">Recharge</button>
+    </div>
 
-<div class="top-nav">LUCKLINE PRO</div>
+    <div class="game-container">
+        <div class="timer-section">
+            <p>Count Down</p>
+            <h2 id="countdown">00:30</h2>
+        </div>
 
-<div class="wallet">
-    <div style="color:#aaa; font-size:14px;">बैलेंस (Available Balance)</div>
-    <div class="balance">₹ <span id="balanceDisplay">0.00</span></div>
-    <button onclick="recharge()" style="background:#009688; border:none; color:white; padding:10px 20px; border-radius:5px; font-weight:bold;">रिचार्ज</button>
-</div>
+        <div class="button-row">
+            <button class="g-btn" onclick="bet('Green')">Join Green</button>
+            <button class="v-btn" onclick="bet('Violet')">Join Violet</button>
+            <button class="r-btn" onclick="bet('Red')">Join Red</button>
+        </div>
+    </div>
 
-<div class="game-card">
-    <div class="period-box">पीरिअड नंबर<b id="periodDisplay">---</b></div>
-    <div class="timer-box">समय (Seconds)<b id="timerDisplay">00:00</b></div>
-</div>
+    <div class="record-table">
+        <h3>Game Record</h3>
+        <div id="history" class="history-grid"></div>
+    </div>
 
-<div class="btn-grid">
-    <button class="color-btn green" onclick="bet('GREEN')">Green</button>
-    <button class="color-btn violet" onclick="bet('VIOLET')">Violet</button>
-    <button class="color-btn red" onclick="bet('RED')">Red</button>
-</div>
-
-<div class="history">
-    <div style="padding:10px; background:#333; border-radius:10px 10px 0 0;">गेम हिस्ट्री</div>
-    <table>
-        <thead><tr><th>पीरिअड</th><th>नंबर</th><th>रंग</th></tr></thead>
-        <tbody id="historyTable"></tbody>
-    </table>
-</div>
-
-<script>
-    // 1. बैलेंस मैनेजमेंट (localStorage)
-    let myBalance = parseFloat(localStorage.getItem('luckline_bal')) || 0;
-    
-    function updateBalance(amt) {
-        myBalance += amt;
-        localStorage.setItem('luckline_bal', myBalance);
-        document.getElementById('balanceDisplay').innerText = myBalance.toFixed(2);
-    }
-
-    function recharge() {
-        let amt = prompt("कितना रिचार्ज करना है?");
-        if(amt) updateBalance(parseFloat(amt));
-    }
-
-    // 2. रियल टाइमर और पीरियड नंबर (Real Clock Based)
-    function startClock() {
-        setInterval(() => {
-            let now = new Date();
-            let seconds = now.getSeconds();
-            let remaining = 60 - seconds;
-            
-            // पीरियड नंबर: साल+महीना+तारीख+कुल मिनट
-            let period = now.getFullYear().toString() + (now.getMonth()+1).toString().padStart(2,'0') + now.getDate().toString().padStart(2,'0') + (now.getHours()*60 + now.getMinutes()).toString().padStart(3,'0');
-            
-            document.getElementById('periodDisplay').innerText = period;
-            document.getElementById('timerDisplay').innerText = "00:" + (remaining < 10 ? "0"+remaining : remaining);
-
-            // जब टाइमर 0 हो (नया मिनट शुरू हो)
-            if (remaining === 60) {
-                generateResult(period);
-            }
-            
-            // आखिरी 5 सेकंड में बेटिंग बंद
-            let btns = document.querySelectorAll('.color-btn');
-            if(remaining <= 5) {
-                btns.forEach(b => b.disabled = true);
-                btns.forEach(b => b.style.opacity = "0.4");
-            } else {
-                btns.forEach(b => b.disabled = false);
-                btns.forEach(b => b.style.opacity = "1");
-            }
-        }, 1000);
-    }
-
-    // 3. गेम रिजल्ट (Demo Random Logic)
-    function generateResult(period) {
-        let num = Math.floor(Math.random() * 10);
-        let color = (num % 2 === 0) ? 'RED' : 'GREEN';
-        if (num === 0 || num === 5) color = 'VIOLET';
-        
-        let row = `<tr><td>${period}</td><td>${num}</td><td><span class="circle ${color.toLowerCase()}"></span> ${color}</td></tr>`;
-        let table = document.getElementById('historyTable');
-        table.innerHTML = row + table.innerHTML;
-    }
-
-    function bet(color) {
-        let amt = prompt("कितने पैसे लगाने हैं?", "10");
-        if(!amt || amt > myBalance) {
-            alert("बैलेंस कम है या गलत अमाउंट है!");
-            return;
-        }
-        updateBalance(-parseFloat(amt));
-        alert(color + " पर ₹" + amt + " लग गए! अगले मिनट रिजल्ट देखें।");
-    }
-
-    // Initialize
-    updateBalance(0);
-    startClock();
-</script>
-
+    <script src="script.js"></script>
 </body>
-    </html>
-    
+</html>
