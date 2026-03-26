@@ -1,73 +1,184 @@
-<!DOCTYPE html>  <html lang="hi">  
-<head>  
-    <meta charset="UTF-8">  
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-    <title>LUCKLINE GAME</title>  
-    <style>  
-        body { font-family: sans-serif; background: #121212; color: white; margin: 0; padding: 0; text-align: center; }  
-        .header { background: #ffcc00; color: black; padding: 15px; font-weight: bold; font-size: 22px; position: sticky; top: 0; }  
-        .wallet-card { background: linear-gradient(45deg, #1e1e1e, #333); margin: 15px; padding: 20px; border-radius: 15px; border-left: 5px solid #ffcc00; text-align: left; }  
-        .balance-amt { font-size: 30px; color: #4caf50; margin: 10px 0; }  
-        .btn-group { display: flex; justify-content: space-around; margin-top: 10px; }  
-        .btn { padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; width: 45%; }  
-        .dep-btn { background: #ffcc00; color: black; }  
-        .wd-btn { background: #fff; color: black; }  
-        .game-zone { padding: 20px; background: #1a1a1a; margin: 15px; border-radius: 15px; }  
-        .color-box { width: 100%; height: 100px; background: #333; border-radius: 10px; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; }  
-        .bet-btns { display: flex; gap: 10px; }  
-        .bet-btn { flex: 1; padding: 15px; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; }  
-        .red { background: #e74c3c; }  
-        .green { background: #2ecc71; }
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); }
-        .modal-content { background: #222; margin: 20% auto; padding: 25px; border-radius: 20px; width: 80%; border: 1px solid #ffcc00; }
-        .upi-id { background: #333; padding: 10px; border-radius: 8px; color: #ffcc00; font-weight: bold; margin: 15px 0; border: 1px dashed #ffcc00; }
-    </style>  
-</head>  
-<body>  
-<div class="header">LUCKLINE GAME</div>  
-<div class="wallet-card">  
-    <div>कुल बैलेंस</div>  
-    <div class="balance-amt">₹ <span id="balance">0.00</span></div>  
-    <div class="btn-group">  
-        <button class="btn dep-btn" onclick="openPayment()">रिचार्ज</button>  
-        <button class="btn wd-btn" onclick="alert('निकासी के लिए ₹500 चाहिए')">निकासी</button>  
-    </div>  
-</div>  
-<div class="game-zone">  
-    <h3>अगला रंग पहचानें</h3>  
-    <div id="result-box" class="color-box">?</div>  
-    <div class="bet-btns">  
-        <button class="bet-btn red" onclick="placeBet('RED')">RED</button>  
-        <button class="bet-btn green" onclick="placeBet('GREEN')">GREEN</button>  
-    </div>  
-</div>  
-<div id="paymentModal" class="modal">
-    <div class="modal-content">
-        <h2 style="color: #ffcc00;">पैसे जमा करें</h2>
-        <div class="upi-id">royalpathan@ptaxis</div>
-        <button class="btn dep-btn" style="width: 100%;" onclick="window.location.href='upi://pay?pa=royalpathan@ptaxis&pn=LUCKLINE&cu=INR'">Pay via UPI App</button>
-        <button class="btn wd-btn" style="width: 100%; margin-top: 10px;" onclick="addDemoMoney()">Add Demo Money</button>
-        <p style="cursor:pointer; color:red; margin-top:10px;" onclick="closePayment()">बंद करें</p>
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUCKLINE PRO - Color Prediction</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a1a; color: white; margin: 0; padding: 0; }
+        .top-nav { background: #009688; padding: 15px; text-align: center; font-size: 20px; font-weight: bold; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .wallet-section { background: linear-gradient(135deg, #333, #222); margin: 15px; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 1px solid #444; }
+        .balance-label { font-size: 14px; color: #bbb; }
+        .balance-amount { font-size: 28px; font-weight: bold; color: #4caf50; margin: 5px 0; }
+        .action-btns { display: flex; gap: 10px; margin-top: 15px; }
+        .btn { flex: 1; padding: 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .recharge-btn { background: #009688; color: white; }
+        .withdraw-btn { background: #f1f1f1; color: #333; }
+
+        /* Timer & Period Section */
+        .game-header { display: flex; justify-content: space-between; padding: 15px; background: #252525; margin: 15px; border-radius: 10px; align-items: center; }
+        .period-info b { color: #009688; display: block; font-size: 18px; }
+        .timer-info b { font-size: 24px; color: #ffeb3b; }
+
+        /* Prediction Buttons */
+        .prediction-box { margin: 15px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+        .color-btn { padding: 15px; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; font-size: 16px; }
+        .bg-green { background: #2ecc71; }
+        .bg-violet { background: #9b59b6; }
+        .bg-red { background: #e74c3c; }
+
+        /* History Table */
+        .history-section { margin: 15px; background: #252525; border-radius: 10px; overflow: hidden; }
+        .history-title { padding: 15px; background: #333; font-weight: bold; border-bottom: 1px solid #444; }
+        table { width: 100%; border-collapse: collapse; text-align: center; }
+        th, td { padding: 12px; border-bottom: 1px solid #333; font-size: 14px; }
+        .dot { height: 12px; width: 12px; border-radius: 50%; display: inline-block; }
+
+        /* Modal */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); }
+        .modal-content { background: #2c2c2c; margin: 30% auto; padding: 25px; border-radius: 15px; width: 85%; text-align: center; border: 1px solid #009688; }
+        input[type="number"] { width: 80%; padding: 10px; margin: 15px 0; border-radius: 5px; border: 1px solid #444; background: #1a1a1a; color: white; }
+    </style>
+</head>
+<body>
+
+<div class="top-nav">LUCKLINE WIN GO</div>
+
+<div class="wallet-section">
+    <div class="balance-label">Available Balance</div>
+    <div class="balance-amount">₹ <span id="balance">1000.00</span></div>
+    <div class="action-btns">
+        <button class="btn recharge-btn" onclick="openRecharge()">Recharge</button>
+        <button class="btn withdraw-btn">Withdraw</button>
     </div>
 </div>
-<script>  
-    let balance = 0;  
-    function openPayment() { document.getElementById('paymentModal').style.display = "block"; }
-    function closePayment() { document.getElementById('paymentModal').style.display = "none"; }
-    function addDemoMoney() { let amt = prompt("Amount?"); if(amt) { balance += parseInt(amt); document.getElementById('balance').innerText = balance.toFixed(2); closePayment(); } }
-    function placeBet(choice) {  
-        if(balance < 10) { alert("बैलेंस कम है!"); return; }  
-        balance -= 10; document.getElementById('balance').innerText = balance.toFixed(2);  
-        let winner = ['RED', 'GREEN'][Math.floor(Math.random() * 2)];  
-        document.getElementById('result-box').innerText = "Wait...";  
-        setTimeout(() => {  
-            document.getElementById('result-box').innerText = winner;  
-            document.getElementById('result-box').style.background = (winner === 'RED') ? '#e74c3c' : '#2ecc71';  
-            if(choice === winner) { balance += 20; alert("जीते!"); } else { alert("हारे!"); }  
-            document.getElementById('balance').innerText = balance.toFixed(2);  
-        }, 2000);  
-    }  
-</script>
-</body>  
-                                                                    </html>
 
+<div class="game-header">
+    <div class="period-info">
+        <span>Period Number</span>
+        <b id="period-id">20240326001</b>
+    </div>
+    <div class="timer-info">
+        <span>Count Down</span>
+        <b id="timer">00:60</b>
+    </div>
+</div>
+
+<div class="prediction-box">
+    <button class="color-btn bg-green" onclick="openBet('GREEN')">Join Green</button>
+    <button class="color-btn bg-violet" onclick="openBet('VIOLET')">Join Violet</button>
+    <button class="color-btn bg-red" onclick="openBet('RED')">Join Red</button>
+</div>
+
+<div class="history-section">
+    <div class="history-title">Game History (Parity)</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Period</th>
+                <th>Number</th>
+                <th>Result</th>
+            </tr>
+        </thead>
+        <tbody id="history-body">
+            </tbody>
+    </table>
+</div>
+
+<div id="betModal" class="modal">
+    <div class="modal-content">
+        <h3 id="betTitle">Join Green</h3>
+        <p style="color: #bbb;">Contract Money</p>
+        <input type="number" id="betAmount" value="10" min="10">
+        <div style="font-size: 12px; color: #ff9800; margin-bottom: 10px;">Note: 2% service fee will be deducted</div>
+        <button class="btn recharge-btn" onclick="confirmBet()">Confirm</button>
+        <button class="btn withdraw-btn" onclick="closeBet()">Cancel</button>
+    </div>
+</div>
+
+<script>
+    let balance = 1000.00;
+    let currentBet = null;
+    let timeLeft = 60;
+    let currentPeriod = 20240326001;
+
+    // Timer Logic
+    setInterval(() => {
+        timeLeft--;
+        if (timeLeft <= 0) {
+            processResult();
+            timeLeft = 60;
+            currentPeriod++;
+            document.getElementById('period-id').innerText = currentPeriod;
+        }
+        let sec = timeLeft < 10 ? "0" + timeLeft : timeLeft;
+        document.getElementById('timer').innerText = "00:" + sec;
+        
+        // Lock betting in last 5 seconds
+        if(timeLeft <= 5) {
+            document.querySelectorAll('.color-btn').forEach(b => b.disabled = true);
+            document.querySelectorAll('.color-btn').forEach(b => b.style.opacity = "0.5");
+        } else {
+            document.querySelectorAll('.color-btn').forEach(b => b.disabled = false);
+            document.querySelectorAll('.color-btn').forEach(b => b.style.opacity = "1");
+        }
+    }, 1000);
+
+    function openBet(color) {
+        currentBet = color;
+        document.getElementById('betTitle').innerText = "Join " + color;
+        document.getElementById('betModal').style.display = "block";
+    }
+
+    function closeBet() {
+        document.getElementById('betModal').style.display = "none";
+    }
+
+    function confirmBet() {
+        let amt = parseInt(document.getElementById('betAmount').value);
+        if (amt > balance) { alert("Insufficient Balance!"); return; }
+        if (amt < 10) { alert("Minimum bet is ₹10"); return; }
+        
+        balance -= amt;
+        updateUI();
+        closeBet();
+        alert("Bet Placed: " + currentBet + " for ₹" + amt);
+    }
+
+    function processResult() {
+        const colors = ['RED', 'GREEN', 'VIOLET'];
+        const winColor = colors[Math.floor(Math.random() * colors.length)];
+        const winNum = Math.floor(Math.random() * 10);
+        
+        // If user won (Demo Logic)
+        // In real app, win/loss will check against 'currentBet'
+
+        addHistory(currentPeriod, winNum, winColor);
+    }
+
+    function addHistory(period, num, color) {
+        let colorClass = color === 'RED' ? 'bg-red' : (color === 'GREEN' ? 'bg-green' : 'bg-violet');
+        let row = `<tr>
+            <td>${period}</td>
+            <td>${num}</td>
+            <td><span class="dot ${colorClass}"></span></td>
+        </tr>`;
+        let table = document.getElementById('history-body');
+        table.innerHTML = row + table.innerHTML;
+    }
+
+    function updateUI() {
+        document.getElementById('balance').innerText = balance.toFixed(2);
+    }
+
+    function openRecharge() {
+        let rAmt = prompt("Enter Recharge Amount:");
+        if(rAmt) {
+            balance += parseInt(rAmt);
+            updateUI();
+        }
+    }
+</script>
+
+</body>
+</html>
