@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | Jalwa Game</title>
+    <style>
+        body { background: #121212; color: white; font-family: sans-serif; text-align: center; padding-top: 50px; }
+        .box { background: #1e1e1e; width: 80%; margin: auto; padding: 20px; border-radius: 10px; }
+        input { width: 90%; padding: 10px; margin: 10px 0; background: #333; border: none; color: white; border-radius: 5px; }
+        .btn { background: #28a745; border: none; width: 95%; padding: 12px; color: white; font-weight: bold; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>Register</h2>
+        <input type="number" placeholder="Mobile Number">
+        <input type="password" placeholder="Password">
+        <input type="number" id="refCode" placeholder="Referral Code (Number Only)">
+        <button class="btn" onclick="alert('Account Created!')">Sign Up</button>
+    </div>
+
+    <script>
+        // ऑटो-फिल रेफरल कोड अगर लिंक में है
+        const params = new URLSearchParams(window.location.search);
+        if(params.has('ref')) {
+            document.getElementById('refCode').value = params.get('ref');
+        }
+    </script>
+</body>
+</html>
