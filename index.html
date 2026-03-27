@@ -1,141 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prediction Game</title>
-
-<style>
-body {
-    margin:0;
-    font-family: Arial;
-    background:#0f172a;
-    color:white;
-    text-align:center;
-}
-
-.header {
-    padding:15px;
-    font-size:20px;
-    background:#111827;
-}
-
-.balance {
-    font-size:22px;
-    margin:10px;
-    color:#4ade80;
-}
-
-.btn {
-    padding:10px 20px;
-    border:none;
-    margin:5px;
-    border-radius:10px;
-    font-weight:bold;
-}
-
-.green{background:#22c55e;}
-.red{background:#ef4444;}
-.violet{background:#a855f7;}
-
-.numbers{
-    display:grid;
-    grid-template-columns: repeat(5,1fr);
-    gap:10px;
-    padding:10px;
-}
-
-.num{
-    padding:20px;
-    border-radius:50%;
-    font-size:18px;
-    background:#1f2937;
-}
-
-.bigsmall{
-    margin-top:10px;
-}
-
-.big{background:orange;}
-.small{background:#3b82f6;}
-
-.timer{
-    font-size:25px;
-    margin:10px;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Game</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #121212; color: white; text-align: center; margin: 0; padding: 0; }
+        .header { background: #ffcc00; color: black; padding: 15px; font-size: 24px; }
+        .balance { font-size: 20px; margin: 10px; color: #4caf50; }
+        .btn-group { margin: 20px; }
+        .btn { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .green { background: #22c55e; color: black; }
+        .red { background: #ef4444; color: black; }
+        .violet { background: #a855f7; color: black; }
+        .result { margin: 20px; font-size: 22px; }
+    </style>
 </head>
-
 <body>
 
-<div class="header">🔥 Prediction Game</div>
-
-<div class="balance">Balance: ₹ <span id="bal">100</span></div>
-
-<div class="timer">Time: <span id="time">30</span>s</div>
-
-<div>
-<button class="btn green" onclick="bet('GREEN')">Green</button>
-<button class="btn violet" onclick="bet('VIOLET')">Violet</button>
-<button class="btn red" onclick="bet('RED')">Red</button>
-</div>
-
-<div class="numbers">
-<div class="num" onclick="bet(0)">0</div>
-<div class="num" onclick="bet(1)">1</div>
-<div class="num" onclick="bet(2)">2</div>
-<div class="num" onclick="bet(3)">3</div>
-<div class="num" onclick="bet(4)">4</div>
-<div class="num" onclick="bet(5)">5</div>
-<div class="num" onclick="bet(6)">6</div>
-<div class="num" onclick="bet(7)">7</div>
-<div class="num" onclick="bet(8)">8</div>
-<div class="num" onclick="bet(9)">9</div>
-</div>
-
-<div class="bigsmall">
-<button class="btn big" onclick="bet('BIG')">Big</button>
-<button class="btn small" onclick="bet('SMALL')">Small</button>
-</div>
-
-<script>
-let balance = 100;
-
-function bet(choice){
-    if(balance < 10){
-        alert("Low balance");
-        return;
-    }
-
-    balance -= 10;
-    update();
-
-    let result = Math.floor(Math.random()*10);
-
-    setTimeout(()=>{
-        if(choice === result || 
-           (choice==='BIG' && result>=5) ||
-           (choice==='SMALL' && result<5)){
-            balance += 20;
-            alert("You Win 🎉 Number: "+result);
-        } else {
-            alert("You Lose ❌ Number: "+result);
+    <div class="header">🔥 Prediction Game</div>
+    <div class="balance">Balance: ₹ <span id="balance">100</span></div>
+    
+    <div class="btn-group">
+        <button class="btn green" onclick="placeBet('GREEN')">Green</button>
+        <button class="btn violet" onclick="placeBet('VIOLET')">Violet</button>
+        <button class="btn red" onclick="placeBet('RED')">Red</button>
+    </div>
+    
+    <div class="result" id="result">Place your bet!</div>
+    
+    <script>
+        let balance = 100;
+        function placeBet(choice) {
+            if (balance < 10) {
+                alert("बैलेंस कम है! ₹10 से कम नहीं हो सकता।");
+                return;
+            }
+            balance -= 10;
+            document.getElementById('balance').innerText = balance;
+            
+            let result = Math.floor(Math.random() * 3); // 0, 1, 2
+            setTimeout(() => {
+                if ((result === 0 && choice === 'GREEN') ||
+                    (result === 1 && choice === 'VIOLET') ||
+                    (result === 2 && choice === 'RED')) {
+                    balance += 20;
+                    document.getElementById('result').innerText = "आप जीते! " + choice;
+                } else {
+                    document.getElementById('result').innerText = "आप हार गए! " + choice;
+                }
+                document.getElementById('balance').innerText = balance;
+            }, 1000);
         }
-        update();
-    },1000);
-}
-
-function update(){
-    document.getElementById("bal").innerText = balance;
-}
-
-let t=30;
-setInterval(()=>{
-    t--;
-    if(t<=0) t=30;
-    document.getElementById("time").innerText = t;
-},1000);
-</script>
-
+    </script>
 </body>
 </html>
