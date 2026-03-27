@@ -1,183 +1,141 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Goal Win</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body {
-      background: #0a0a0f;
-      color: white;
-      font-family: system-ui, sans-serif;
-    }
-    .ball {
-      width: 58px;
-      height: 58px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 26px;
-      font-weight: 700;
-      color: white;
-      border: 4px solid rgba(255,255,255,0.3);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.65);
-    }
-    .green-ball { background: linear-gradient(135deg, #22c55e, #15803d); }
-    .red-ball { background: linear-gradient(135deg, #ef4444, #b91c1c); }
-    .violet-ball { background: linear-gradient(135deg, #a855f7, #6b21a8); }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prediction Game</title>
 
-    .color-btn {
-      height: 54px;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 17px;
-    }
-  </style>
+<style>
+body {
+    margin:0;
+    font-family: Arial;
+    background:#0f172a;
+    color:white;
+    text-align:center;
+}
+
+.header {
+    padding:15px;
+    font-size:20px;
+    background:#111827;
+}
+
+.balance {
+    font-size:22px;
+    margin:10px;
+    color:#4ade80;
+}
+
+.btn {
+    padding:10px 20px;
+    border:none;
+    margin:5px;
+    border-radius:10px;
+    font-weight:bold;
+}
+
+.green{background:#22c55e;}
+.red{background:#ef4444;}
+.violet{background:#a855f7;}
+
+.numbers{
+    display:grid;
+    grid-template-columns: repeat(5,1fr);
+    gap:10px;
+    padding:10px;
+}
+
+.num{
+    padding:20px;
+    border-radius:50%;
+    font-size:18px;
+    background:#1f2937;
+}
+
+.bigsmall{
+    margin-top:10px;
+}
+
+.big{background:orange;}
+.small{background:#3b82f6;}
+
+.timer{
+    font-size:25px;
+    margin:10px;
+}
+</style>
 </head>
-<body class="pb-24">
 
-  <!-- Header -->
-  <header class="bg-zinc-900 py-4 px-4 flex items-center justify-between border-b border-zinc-800">
-    <div class="flex items-center gap-2">
-      <span class="text-2xl font-bold text-emerald-400">GOAL</span>
-      <span class="text-2xl font-bold">WIN</span>
-    </div>
-    <div onclick="showWallet()" class="flex items-center gap-2 bg-zinc-800 px-5 py-2 rounded-2xl cursor-pointer">
-      <span class="text-emerald-400">₹</span>
-      <span id="balance" class="font-bold">2450.00</span>
-    </div>
-  </header>
+<body>
 
-  <!-- Game Modes -->
-  <div class="px-4 py-3 flex gap-2 overflow-x-auto bg-zinc-950">
-    <div class="bg-gradient-to-r from-cyan-500 to-emerald-500 text-black font-bold px-6 py-3 rounded-3xl whitespace-nowrap">WinGo 30sec</div>
-    <div class="bg-zinc-800 px-6 py-3 rounded-3xl whitespace-nowrap">WinGo 1 Min</div>
-    <div class="bg-zinc-800 px-6 py-3 rounded-3xl whitespace-nowrap">WinGo 3 Min</div>
-    <div class="bg-zinc-800 px-6 py-3 rounded-3xl whitespace-nowrap">WinGo 5 Min</div>
-  </div>
+<div class="header">🔥 Prediction Game</div>
 
-  <!-- Timer + How to play -->
-  <div class="mx-4 mt-4 bg-gradient-to-r from-teal-900 to-cyan-900 rounded-3xl p-5 flex items-center justify-between">
-    <div>
-      <div class="flex items-center gap-2 text-sm">
-        <span>How to play</span>
-      </div>
-      <div class="text-xs text-zinc-300">WinGo 30sec</div>
-    </div>
-    <div class="text-right">
-      <div class="text-xs text-zinc-400">Time remaining</div>
-      <div id="timer" class="text-5xl font-mono font-bold text-white">00:29</div>
-      <div id="period" class="text-xs text-zinc-500">20260326100052068</div>
-    </div>
-  </div>
+<div class="balance">Balance: ₹ <span id="bal">100</span></div>
 
-  <!-- Main Betting -->
-  <div class="mx-4 mt-6 bg-zinc-900 rounded-3xl p-6">
+<div class="timer">Time: <span id="time">30</span>s</div>
 
-    <!-- Color Buttons -->
-    <div class="grid grid-cols-3 gap-4 mb-8">
-      <button onclick="openBet('Green')" class="color-btn bg-emerald-600">Green</button>
-      <button onclick="openBet('Violet')" class="color-btn bg-violet-600">Violet</button>
-      <button onclick="openBet('Red')" class="color-btn bg-red-600">Red</button>
-    </div>
+<div>
+<button class="btn green" onclick="bet('GREEN')">Green</button>
+<button class="btn violet" onclick="bet('VIOLET')">Violet</button>
+<button class="btn red" onclick="bet('RED')">Red</button>
+</div>
 
-    <!-- Number Balls -->
-    <div id="balls" class="grid grid-cols-5 gap-4 mb-8"></div>
+<div class="numbers">
+<div class="num" onclick="bet(0)">0</div>
+<div class="num" onclick="bet(1)">1</div>
+<div class="num" onclick="bet(2)">2</div>
+<div class="num" onclick="bet(3)">3</div>
+<div class="num" onclick="bet(4)">4</div>
+<div class="num" onclick="bet(5)">5</div>
+<div class="num" onclick="bet(6)">6</div>
+<div class="num" onclick="bet(7)">7</div>
+<div class="num" onclick="bet(8)">8</div>
+<div class="num" onclick="bet(9)">9</div>
+</div>
 
-    <!-- Multipliers -->
-    <div class="flex flex-wrap gap-2 mb-6">
-      <button onclick="selectOption(this)" class="px-5 py-2 bg-zinc-700 rounded-2xl text-sm">Random</button>
-      <button onclick="selectOption(this)" class="px-5 py-2 bg-emerald-500 rounded-2xl text-sm">X1</button>
-      <button onclick="selectOption(this)" class="px-5 py-2 bg-zinc-700 rounded-2xl text-sm">X5</button>
-      <button onclick="selectOption(this)" class="px-5 py-2 bg-zinc-700 rounded-2xl text-sm">X10</button>
-      <button onclick="selectOption(this)" class="px-5 py-2 bg-zinc-700 rounded-2xl text-sm">X20</button>
-    </div>
+<div class="bigsmall">
+<button class="btn big" onclick="bet('BIG')">Big</button>
+<button class="btn small" onclick="bet('SMALL')">Small</button>
+</div>
 
-    <!-- Big / Small -->
-    <div class="grid grid-cols-2 gap-4">
-      <button onclick="openBet('Big')" class="py-5 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl font-bold text-lg">Big</button>
-      <button onclick="openBet('Small')" class="py-5 bg-gradient-to-r from-sky-500 to-blue-500 rounded-2xl font-bold text-lg">Small</button>
-    </div>
-  </div>
+<script>
+let balance = 100;
 
-  <!-- Bottom Navigation -->
-  <nav class="fixed bottom-0 left-0 right-0 bg-zinc-900 border-t border-zinc-800 py-3">
-    <div class="grid grid-cols-4 text-center text-xs">
-      <div class="text-emerald-400">Home</div>
-      <div class="text-zinc-400">Activity</div>
-      <div onclick="showWallet()" class="text-zinc-400">Wallet</div>
-      <div class="text-zinc-400">Account</div>
-    </div>
-  </nav>
-
-  <script>
-    let balance = 2450.00;
-
-    function updateBalance() {
-      document.getElementById('balance').textContent = balance.toFixed(2);
-    }
-
-    function createBalls() {
-      const container = document.getElementById('balls');
-      container.innerHTML = '';
-      const colorClasses = ['violet-ball','green-ball','red-ball','green-ball','red-ball','violet-ball','green-ball','red-ball','green-ball','red-ball'];
-      for (let i = 0; i <= 9; i++) {
-        const div = document.createElement('div');
-        div.className = `ball ${colorClasses[i]}`;
-        div.textContent = i;
-        container.appendChild(div);
-      }
-    }
-
-    function startTimer() {
-      let time = 30;
-      const timerEl = document.getElementById('timer');
-      const interval = setInterval(() => {
-        time--;
-        timerEl.textContent = `00:\( {time < 10 ? '0' : ''} \){time}`;
-        if (time <= 0) {
-          clearInterval(interval);
-          generateResult();
-          setTimeout(startTimer, 1800);
-        }
-      }, 1000);
-    }
-
-    function openBet(type) {
-      const amt = prompt(`Bet on ${type}\nEnter amount (₹):`, "50");
-      if (!amt) return;
-      const amount = parseFloat(amt);
-      if (amount > balance) {
-        alert("Balance kam hai!");
+function bet(choice){
+    if(balance < 10){
+        alert("Low balance");
         return;
-      }
-      balance -= amount;
-      updateBalance();
-      alert(`Bet placed on \( {type} for ₹ \){amount}`);
     }
 
-    function selectOption(btn) {
-      document.querySelectorAll('#balls \~ div button').forEach(b => b.classList.remove('bg-emerald-500'));
-      btn.classList.add('bg-emerald-500');
-    }
+    balance -= 10;
+    update();
 
-    function generateResult() {
-      const num = Math.floor(Math.random() * 10);
-      alert(`Result: ${num}`);
-    }
+    let result = Math.floor(Math.random()*10);
 
-    function showWallet() {
-      alert("Wallet Balance: ₹" + balance.toFixed(2) + "\n\nDeposit / Withdraw yahan aayega (backend chahiye)");
-    }
+    setTimeout(()=>{
+        if(choice === result || 
+           (choice==='BIG' && result>=5) ||
+           (choice==='SMALL' && result<5)){
+            balance += 20;
+            alert("You Win 🎉 Number: "+result);
+        } else {
+            alert("You Lose ❌ Number: "+result);
+        }
+        update();
+    },1000);
+}
 
-    // Init
-    window.onload = () => {
-      createBalls();
-      updateBalance();
-      startTimer();
-    };
-  </script>
+function update(){
+    document.getElementById("bal").innerText = balance;
+}
+
+let t=30;
+setInterval(()=>{
+    t--;
+    if(t<=0) t=30;
+    document.getElementById("time").innerText = t;
+},1000);
+</script>
+
 </body>
 </html>
